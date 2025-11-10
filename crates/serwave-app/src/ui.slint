@@ -1,0 +1,207 @@
+import { Button, ComboBox, CheckBox, LineEdit, ScrollView, TextEdit } from "std-widgets.slint";
+
+export component MainWindow inherits Window {
+    width: 1000px;
+    height: 700px;
+    title: "SerWave";
+    default-font-family: "SimHei";
+
+    in property<string> log_text;
+    in property<bool> is_connected;
+    in property<[string]> port_list;
+    in-out property<string> selected_port;
+    in-out property<int> baud_rate: 115200;
+    in-out property<bool> show_timestamp: true;
+    in-out property<bool> show_hex: false;
+    in-out property<bool> dtr_enabled: false;
+    in-out property<bool> rts_enabled: false;
+    in property<bool> cts_status: false;
+    in property<bool> dsr_status: false;
+    in property<bool> dcd_status: false;
+    in property<bool> ri_status: false;
+    in property<string> selected_encoding: "Auto";
+    in property<[string]> encoding_list: ["Auto", "UTF-8", "UTF-16", "ASCII", "GBK", "GB2312"];
+
+    callback connect_clicked();
+    callback disconnect_clicked();
+    callback send_clicked(string);
+    callback clear_clicked();
+    callback refresh_ports_clicked();
+    callback dtr_toggled(bool);
+    callback rts_toggled(bool);
+    callback encoding_changed(string);
+    callback display_options_changed();
+
+    HorizontalLayout {
+        padding: 10px;
+        spacing: 10px;
+
+        // Left panel - Port settings
+        VerticalLayout {
+            width: 250px;
+            spacing: 8px;
+
+            Text {
+                text: "串口设置";
+                font-size: 16px;
+                font-weight: 700;
+            }
+
+            Rectangle {
+                height: 1px;
+                background: #ccc;
+            }
+
+            Text { text: "端口:"; }
+            ComboBox {
+                model: port_list;
+                current-value <=> selected_port;
+            }
+
+            HorizontalLayout {
+                spacing: 4px;
+                Button {
+                    text: "刷新";
+                    clicked => { refresh_ports_clicked(); }
+                }
+            }
+
+            Text { text: "波特率:"; }
+            ComboBox {
+                model: ["9600", "19200", "38400", "57600", "115200", "230400", "460800", "921600"];
+                current-value: baud_rate == 9600 ? "9600" : baud_rate == 19200 ? "19200" : baud_rate == 38400 ? "38400" : baud_rate == 57600 ? "57600" : baud_rate == 115200 ? "115200" : baud_rate == 230400 ? "230400" : baud_rate == 460800 ? "460800" : "921600";
+                selected(value) => {
+                    if (value == "9600") { baud_rate = 9600; }
+                    else if (value == "19200") { baud_rate = 19200; }
+                    else if (value == "38400") { baud_rate = 38400; }
+                    else if (value == "57600") { baud_rate = 57600; }
+                    else if (value == "115200") { baud_rate = 115200; }
+                    else if (value == "230400") { baud_rate = 230400; }
+                    else if (value == "460800") { baud_rate = 460800; }
+                    else if (value == "921600") { baud_rate = 921600; }
+                }
+            }
+
+            Rectangle {
+                height: 1px;
+                background: #ccc;
+            }
+
+            if !is_connected: Button {
+                text: "连接";
+                primary: true;
+                clicked => { connect_clicked(); }
+            }
+
+            if is_connected: Button {
+                text: "断开";
+                clicked => { disconnect_clicked(); }
+            }
+
+            Rectangle {
+                height: 1px;
+                background: #ccc;
+            }
+
+            Text { text: "控制信号:"; }
+
+            HorizontalLayout {
+                spacing: 10px;
+                CheckBox {
+                    text: "DTR";
+                    checked <=> dtr_enabled;
+                    enabled: is_connected;
+                    toggled => { dtr_toggled(self.checked); }
+                }
+                CheckBox {
+                    text: "RTS";
+                    checked <=> rts_enabled;
+                    enabled: is_connected;
+                    toggled => { rts_toggled(self.checked); }
+                }
+            }
+
+            Text {
+                text: "状态: CTS:" + (cts_status ? "✓" : "✗") + " DSR:" + (dsr_status ? "✓" : "✗") + " DCD:" + (dcd_status ? "✓" : "✗") + " RI:" + (ri_status ? "✓" : "✗");
+                font-size: 11px;
+            }
+
+            Rectangle {
+                height: 1px;
+                background: #ccc;
+            }
+
+            Text { text: "编码:"; }
+            ComboBox {
+                model: encoding_list;
+                current-value: selected_encoding;
+                selected(value) => { encoding_changed(value); }
+            }
+
+            Rectangle {
+                height: 1px;
+                background: #ccc;
+            }
+
+            Text { text: "显示选项:"; }
+
+            HorizontalLayout {
+                CheckBox {
+                    text: "时间戳";
+                    checked <=> show_timestamp;
+                    toggled => { display_options_changed(); }
+                }
+            }
+
+            HorizontalLayout {
+                CheckBox {
+                    text: "HEX模式";
+                    checked <=> show_hex;
+                    toggled => { display_options_changed(); }
+                }
+            }
+
+            Rectangle { }
+        }
+
+        // Right panel - Log and send
+        VerticalLayout {
+            spacing: 8px;
+
+            // Log area
+            TextEdit {
+                text: log_text;
+                font-size: 13px;
+                read-only: true;
+            }
+
+            // Send area
+            HorizontalLayout {
+                height: 40px;
+                spacing: 8px;
+
+                LineEdit {
+                    placeholder-text: "输入要发送的数据...";
+                    enabled: is_connected;
+                    accepted(text) => {
+                        send_clicked(text);
+                        self.text = "";
+                    }
+                }
+
+                Button {
+                    text: "发送";
+                    enabled: is_connected;
+                    clicked => {
+                        send_clicked(self.text);
+                    }
+                }
+
+                Button {
+                    text: "清空";
+                    clicked => { clear_clicked(); }
+                }
+            }
+        }
+    }
+}

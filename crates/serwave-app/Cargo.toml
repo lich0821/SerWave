@@ -1,0 +1,15 @@
+
+[package]
+name = "serwave-app"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+slint = { version = "1", features = ["backend-winit", "renderer-femtovg"] }
+serwave-core = { path = "../serwave-core" }
+serwave-decode = { path = "../serwave-decode" }
+anyhow = "1"
+
+[build-dependencies]
+slint-build = "1"
