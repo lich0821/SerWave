@@ -4,6 +4,10 @@ name = "serwave-app"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
+authors = ["SerWave Contributors"]
+description = "A lightweight serial port debugger with protocol decoding"
+homepage = "https://github.com/your-username/SerWave"
+repository = "https://github.com/your-username/SerWave"
 
 [dependencies]
 slint = { version = "1", features = ["backend-winit", "renderer-femtovg"] }
@@ -13,3 +17,23 @@ anyhow = "1"
 
 [build-dependencies]
 slint-build = "1"
+
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1"
+
+[package.metadata.packager]
+product_name = "SerWave"
+identifier = "com.serwave.app"
+category = "Utility"
+icons = ["../../assets/icon.png"]
+resources = []
+
+[package.metadata.packager.macos]
+frameworks = []
+minimum_system_version = "11.0"
+
+[package.metadata.packager.windows]
+allow_downgrades = true
+
+[package.metadata.packager.linux]
+generate-desktop-entry = true
