@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="400" viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00D1B2"/>
+      <stop offset="50%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#22D3EE"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="400" fill="#0B1220"/>
+  <g transform="translate(70,130)">
+    <text x="0" y="0" font-family="Inter, Helvetica, Arial, sans-serif"
+          font-size="120" font-weight="800" fill="url(#g)">SerWave</text>
+    <text x="6" y="54" font-family="Noto Sans CJK SC, Source Han Sans SC, Microsoft YaHei"
+          font-size="40" fill="#A5B4FC">串观</text>
+  </g>
+  <g transform="translate(70,250)">
+    <path d="M0,60 L60,60 L60,10 L160,10 L160,60 L260,60 L260,30 L360,30 L360,60 L460,60 L460,15 L560,15 L560,60 L660,60 L660,35 L760,35 L760,60 L860,60 L860,25 L960,25 L960,60 L1060,60"
+          fill="none" stroke="url(#g)" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+    <g stroke="#233044" stroke-width="2">
+      <line x1="0" y1="80" x2="1060" y2="80"/>
+      <line x1="0" y1="80" x2="0" y2="92"/><line x1="80" y1="80" x2="80" y2="92"/><line x1="160" y1="80" x2="160" y2="92"/><line x1="240" y1="80" x2="240" y2="92"/><line x1="320" y1="80" x2="320" y2="92"/><line x1="400" y1="80" x2="400" y2="92"/><line x1="480" y1="80" x2="480" y2="92"/><line x1="560" y1="80" x2="560" y2="92"/><line x1="640" y1="80" x2="640" y2="92"/><line x1="720" y1="80" x2="720" y2="92"/><line x1="800" y1="80" x2="800" y2="92"/><line x1="880" y1="80" x2="880" y2="92"/><line x1="960" y1="80" x2="960" y2="92"/><line x1="1040" y1="80" x2="1040" y2="92"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,8 @@
+.*
+!.gitignore
+!.github/
+
+/target
+**/*.rs.bk
+*.swp
+/dist
