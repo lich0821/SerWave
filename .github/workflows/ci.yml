@@ -40,7 +40,6 @@ jobs:
           - { os: macos-latest, target: x86_64-apple-darwin }
           - { os: macos-latest, target: aarch64-apple-darwin }
           - { os: windows-latest, target: x86_64-pc-windows-msvc }
-          - { os: windows-latest, target: aarch64-pc-windows-msvc }
 
     steps:
       - uses: actions/checkout@v4
@@ -74,7 +73,8 @@ jobs:
         shell: bash
         run: |
           cd target/${{ matrix.config.target }}/release
-          for file in *.deb *.AppImage *.tar.gz *.dmg *.exe 2>/dev/null; do
+          shopt -s nullglob
+          for file in *.deb *.AppImage *.tar.gz *.dmg *.exe; do
             [ -f "$file" ] || continue
             ext="${file##*.}"
             base="${file%.*}"
