@@ -71,6 +71,16 @@ jobs:
         run: cargo build --release -p serwave-app --target ${{ matrix.config.target }} --locked
       - name: Package
         run: cargo packager --release -p serwave-app --target ${{ matrix.config.target }}
+      - name: Rename artifacts
+        shell: bash
+        run: |
+          cd target/${{ matrix.config.target }}/release
+          for file in *.deb *.AppImage *.tar.gz *.dmg *.exe 2>/dev/null; do
+            [ -f "$file" ] || continue
+            ext="${file##*.}"
+            base="${file%.*}"
+            mv "$file" "${base}_${{ matrix.config.target }}.${ext}"
+          done
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
