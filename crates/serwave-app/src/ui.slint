@@ -22,6 +22,12 @@ export component MainWindow inherits Window {
     in property<bool> ri_status: false;
     in property<string> selected_encoding: "Auto";
     in property<[string]> encoding_list: ["Auto", "UTF-8", "UTF-16", "ASCII", "GBK", "GB2312"];
+    in-out property<bool> show_rx: true;
+    in-out property<bool> show_tx: true;
+    in-out property<string> highlight_keywords: "";
+    in-out property<bool> hex_send_mode: false;
+    in property<[string]> preset_list;
+    in-out property<string> selected_preset;
 
     callback connect_clicked();
     callback disconnect_clicked();
@@ -32,6 +38,9 @@ export component MainWindow inherits Window {
     callback rts_toggled(bool);
     callback encoding_changed(string);
     callback display_options_changed();
+    callback preset_selected(string);
+    callback save_preset_clicked(string, string, bool);
+    callback delete_preset_clicked(string);
 
     HorizontalLayout {
         padding: 10px;
@@ -146,20 +155,35 @@ export component MainWindow inherits Window {
 
             Text { text: "显示选项:"; }
 
-            HorizontalLayout {
-                CheckBox {
-                    text: "时间戳";
-                    checked <=> show_timestamp;
-                    toggled => { display_options_changed(); }
-                }
+            CheckBox {
+                text: "时间戳";
+                checked <=> show_timestamp;
+                toggled => { display_options_changed(); }
             }
 
-            HorizontalLayout {
-                CheckBox {
-                    text: "HEX模式";
-                    checked <=> show_hex;
-                    toggled => { display_options_changed(); }
-                }
+            CheckBox {
+                text: "HEX模式";
+                checked <=> show_hex;
+                toggled => { display_options_changed(); }
+            }
+
+            CheckBox {
+                text: "显示RX";
+                checked <=> show_rx;
+                toggled => { display_options_changed(); }
+            }
+
+            CheckBox {
+                text: "显示TX";
+                checked <=> show_tx;
+                toggled => { display_options_changed(); }
+            }
+
+            Text { text: "关键字高亮:"; }
+            LineEdit {
+                placeholder-text: "逗号分隔";
+                text <=> highlight_keywords;
+                edited => { display_options_changed(); }
             }
 
             Rectangle { }
@@ -177,12 +201,12 @@ export component MainWindow inherits Window {
             }
 
             // Send area
-            HorizontalLayout {
-                height: 40px;
-                spacing: 8px;
+            VerticalLayout {
+                spacing: 4px;
 
-                LineEdit {
-                    placeholder-text: "输入要发送的数据...";
+                send_input := LineEdit {
+                    height: 40px;
+                    placeholder-text: hex_send_mode ? "HEX格式 (如: 48656C6C6F)" : "输入要发送的数据...";
                     enabled: is_connected;
                     accepted(text) => {
                         send_clicked(text);
@@ -190,17 +214,64 @@ export component MainWindow inherits Window {
                     }
                 }
 
-                Button {
-                    text: "发送";
-                    enabled: is_connected;
-                    clicked => {
-                        send_clicked(self.text);
+                HorizontalLayout {
+                    height: 35px;
+                    spacing: 8px;
+
+                    Button {
+                        text: "发送";
+                        enabled: is_connected;
+                        clicked => {
+                            send_clicked(send_input.text);
+                            send_input.text = "";
+                        }
+                    }
+
+                    Button {
+                        text: "清空";
+                        clicked => { clear_clicked(); }
+                    }
+
+                    CheckBox {
+                        text: "HEX";
+                        checked <=> hex_send_mode;
                     }
                 }
 
-                Button {
-                    text: "清空";
-                    clicked => { clear_clicked(); }
+                HorizontalLayout {
+                    height: 35px;
+                    spacing: 8px;
+
+                    Text { text: "预设:"; vertical-alignment: center; }
+
+                    ComboBox {
+                        model: preset_list;
+                        current-value <=> selected_preset;
+                        selected(value) => { preset_selected(value); }
+                    }
+
+                    preset_name := LineEdit {
+                        placeholder-text: "预设名称";
+                        width: 100px;
+                    }
+
+                    Button {
+                        text: "保存";
+                        clicked => {
+                            if (preset_name.text != "" && send_input.text != "") {
+                                save_preset_clicked(preset_name.text, send_input.text, hex_send_mode);
+                                preset_name.text = "";
+                            }
+                        }
+                    }
+
+                    Button {
+                        text: "删除";
+                        enabled: selected_preset != "";
+                        clicked => {
+                            delete_preset_clicked(selected_preset);
+                        }
+                    }
                 }
             }
         }

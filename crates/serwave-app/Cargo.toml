@@ -1,19 +1,22 @@
 
 [package]
 name = "serwave-app"
-version = "0.1.0"
-edition = "2021"
-license = "MIT OR Apache-2.0"
-authors = ["SerWave Contributors"]
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
 description = "A lightweight serial port debugger with protocol decoding"
-homepage = "https://github.com/your-username/SerWave"
-repository = "https://github.com/your-username/SerWave"
 
 [dependencies]
 slint = { version = "1", features = ["backend-winit", "renderer-femtovg"] }
 serwave-core = { path = "../serwave-core" }
 serwave-decode = { path = "../serwave-decode" }
 anyhow = "1"
+hex = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+dirs = "5"
 
 [build-dependencies]
 slint-build = "1"
