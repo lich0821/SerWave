@@ -53,10 +53,21 @@ jobs:
           key: ${{ matrix.config.target }}
       - name: Install Linux dependencies
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libudev-dev libssl-dev
+        run: |
+          sudo apt-get update
+          if [ "${{ matrix.config.target }}" = "aarch64-unknown-linux-gnu" ]; then
+            sudo dpkg --add-architecture arm64
+            sudo apt-get update
+            sudo apt-get install -y gcc-aarch64-linux-gnu libudev-dev:arm64 libssl-dev:arm64
+          else
+            sudo apt-get install -y libudev-dev libssl-dev
+          fi
       - name: Install cargo-packager
         run: cargo install cargo-packager --locked
       - name: Build Release
+        env:
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
+          PKG_CONFIG_ALLOW_CROSS: 1
         run: cargo build --release -p serwave-app --target ${{ matrix.config.target }} --locked
       - name: Package
         run: cargo packager --release -p serwave-app --target ${{ matrix.config.target }}
