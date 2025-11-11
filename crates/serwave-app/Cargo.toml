@@ -25,7 +25,7 @@ slint-build = "1"
 winres = "0.1"
 
 [package.metadata.packager]
-product_name = "SerWave"
+product_name = "serwave"
 identifier = "com.serwave.app"
 category = "Utility"
 icons = ["../../assets/icon.png"]
